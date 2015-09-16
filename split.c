@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdio.h>
-
+#include <stdlib.h>
 
 #define DEF_STRING_LENGTH 100
 #define DEF_TOKENS_COUNT 10
@@ -23,7 +23,7 @@ int main()
    */
 	memcpy(tokenData, string, sizeof(char) * DEF_STRING_LENGTH); //copying the string as it will be modified by the Split function
 	
-	char** tokens = NULL;
+	char** tokens = (char**)calloc(DEF_TOKENS_COUNT, sizeof(char*));
 	int tokensCount = 0;
 	
 	Split(tokenData, delimeters, &tokens, &tokensCount);
@@ -39,6 +39,7 @@ int main()
    * 1. не забывайте сами освобождать память за собой
    * 2. компилятор выдаёт предупреждения, т.к. вы не подключили нужный заголовочный файл для calloc. 
    */
+   	free(tokens);
 	
 	return 0;
 }
@@ -53,7 +54,7 @@ int Split(char* string, char* delimeters, char*** tokens, int* tokensCount)
    * Если вы сделаете динамическую библиотеку, то такое точно сделать не получится (в разных местах выделить и освободить память).
    * Надо вынести выделение памяти в main.
    */
-	*tokens = (char**)calloc(DEF_TOKENS_COUNT, sizeof(char*));
+	//*tokens = (char**)calloc(DEF_TOKENS_COUNT, sizeof(char*));
 	
 	int maxTokensCount = DEF_TOKENS_COUNT;
 	
@@ -61,7 +62,7 @@ int Split(char* string, char* delimeters, char*** tokens, int* tokensCount)
 	/*
    * мне кажется, что *(*tokens + *tokensCount) куда менее понятно, чем (*tokens)[*tokensCount]
    */
-	*(*tokens + *tokensCount) = strtok(string, delimeters);
+	(*tokens)[*tokensCount] = strtok(string, delimeters);
 	while(*(*tokens + *tokensCount) != NULL)
 	{
 		(*tokensCount)++;
@@ -72,7 +73,7 @@ int Split(char* string, char* delimeters, char*** tokens, int* tokensCount)
 		}
 		
 		
-		*(*tokens + *tokensCount) = strtok(NULL, delimeters);
+		(*tokens)[*tokensCount] = strtok(NULL, delimeters);
 	}
 	
 	return *tokensCount;

@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define N 3
-#define M 3
+#define N 10
+#define M 1000
 #define ELEM(MATR, i, j) *(MATR + i * M + j)
 
 void* multipl(void* arg);
@@ -27,14 +27,14 @@ int main()
     {
         for(j = 0; j < M; j++)
         {
-            ELEM(A, i, j) = rand() % 20 - 10;
-            ELEM(B, i, j) = rand() % 20 - 10;
+            ELEM(A, i, j) = rand() % 200 - 100;
+            ELEM(B, i, j) = rand() % 200 - 100;
         }
     }
     
-    PrintMatrix(A, M);
-    printf("\n");
-    PrintMatrix(B, M);
+    //PrintMatrix(A, M);
+    //printf("\n");
+    //PrintMatrix(B, M);
     
     
     pthread_t threadIDs[N];
@@ -58,7 +58,7 @@ int main()
     
     printf("Done! Clocks elapsed: %u\n", clock() - startTime);
     
-    PrintMatrix(C, M);
+    //PrintMatrix(C, M);
     
     free(A);
     free(B);

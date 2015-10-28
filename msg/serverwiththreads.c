@@ -30,7 +30,7 @@ void* ThreadFunc(void* arg)
     {
         printf("Can`t wait for condition\n");
         semctl(semid, IPC_RMID, 0); 
-        exit(-1);
+        return NULL;
     }
     mybuf* myMsgBuf = (mybuf*)arg;
     
@@ -44,7 +44,7 @@ void* ThreadFunc(void* arg)
     {
         printf("Can't send a message, errno = %d\n", errno);
         msgctl(msqid, IPC_RMID, (struct msqid_ds*)NULL);
-        exit(-1);
+        return NULL;
     }
             
     printf("finished computing for %ld\n", myMsgBuf->pid);
@@ -56,7 +56,7 @@ void* ThreadFunc(void* arg)
     {
         printf("Can`t wait for condition\n");
         semctl(semid, IPC_RMID, 0); 
-        exit(-1);
+        return NULL;
     }
     return NULL;    
 }

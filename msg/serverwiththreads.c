@@ -117,12 +117,14 @@ int main()
         
         pthread_t thread_id;
         
+        /*
+         * Да, всё нормально. Вы выделяете под каждое сообщение свой кусок памяти в кучу, а в ф-ю pthread_create передаёте этот указатель по значению.
+         */
         if(pthread_create(&thread_id, (pthread_attr_t*)NULL, ThreadFunc, (void*)myMsgBuf) < 0)
         {
             printf("Can't create a thread!\n");
             exit(-1);
         }
-        
     }
     
     msgctl(msqid, IPC_RMID, (struct msqid_ds*)NULL);

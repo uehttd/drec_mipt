@@ -116,10 +116,6 @@ int main()
         printf("received a message from %ld\n", myMsgBuf->pid);
         
         pthread_t thread_id;
-        
-        /*
-         * Да, всё нормально. Вы выделяете под каждое сообщение свой кусок памяти в кучу, а в ф-ю pthread_create передаёте этот указатель по значению.
-         */
         if(pthread_create(&thread_id, (pthread_attr_t*)NULL, ThreadFunc, (void*)myMsgBuf) < 0)
         {
             printf("Can't create a thread!\n");

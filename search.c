@@ -8,8 +8,15 @@
 
 int Search(char* currPath, char* target, char* result, int n);
 
+/*
+ * Засчитано, но поправьте формальные замечания.
+ */
+
 int main(int argc, char *argv[], char *envp[])
 {
+    /*
+     * FIXIT: не используйте магические числа. выносите в константы.
+     */
     char startPath[255];
     strcat(startPath, argv[1]);
     strcat(startPath, "/");
@@ -62,6 +69,9 @@ int Search(char* currPath, char* target, char* result, int n)
         if(S_ISDIR(buf->st_mode) && strcmp(direntRes->d_name, ".") && strcmp(direntRes->d_name, ".."))
         {
             strcat(pathname, "/");
+            /*
+             * FIXIT: пробелы вокруг бинарных операторов
+             */
             if(Search(pathname, target, result, n-1))
             {   
                 free(buf);

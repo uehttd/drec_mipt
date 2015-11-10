@@ -3,6 +3,12 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+/*
+ * Если программа пишет предупреждения, то это не здорово. 
+ * Иногда за предупреждениями кроется ошибка, например, работа с неинициализированной переменной.
+ * В данном случае вы забыли подключить заголовочный файл string.h, но всё же всегда обращайте на это внимание.
+ */
+
 #define STRING_LENGTH 255
 
 pid_t pid;
@@ -10,11 +16,10 @@ int bitsRead;
 int bytesRead;
 char message[STRING_LENGTH];
 
-void* my_handler(int nsig)
+void my_handler(int nsig)
 {
     if(nsig == SIGUSR1) //0
     {
-        
     }
     if(nsig == SIGUSR2) //1
     {
@@ -33,7 +38,6 @@ void* my_handler(int nsig)
             bytesRead = 0;
         }
     }
-    return NULL;
 }
 
 void SendAByte(char byte, pid_t pid);
@@ -53,7 +57,6 @@ int main(void)
     {
         while(1)
         {
-            
             fgets(message, STRING_LENGTH, stdin);
             int l = strlen(message);
             int i = 0;
@@ -74,6 +77,12 @@ void SendAByte(char byte, pid_t pid)
     for(i = 0; i < 8; i++)
     {
         //printf("%d %d %u\n", getpid(), i, c);
+        /*
+	 * Есть удобная штука, которая называется тернарный оператор:
+	 * код ниже можно написать так
+	 * kill(pid, (c & 1) ? SIGUSR2 : SIGUSR1);
+	 * Коротко и понятно.
+	 */
         if(c & 1)
         {
             kill(pid, SIGUSR2);
@@ -84,5 +93,11 @@ void SendAByte(char byte, pid_t pid)
         }
         c = c >> 1;
         sleep(1); //making a pause for receiver to process the signal
+	/*
+	 * Можно было бы задействовать ещё один сигнал (любой, например, SIGINT), который отправлялся бы от получателя битов к отправителю,
+	 * сигнализирующий о готовности принимать следующую информацию. Вы же всегда надеетесь, что за секунду принимающая
+	 * сторона управится. Как-то совсем не круто: сейчас скорость передачи 1 bit/sec...
+	 * Поправьте это.
+	 */
     }
 }

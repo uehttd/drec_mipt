@@ -21,7 +21,7 @@ void* my_handler(int nsig)
         message[bytesRead] = message[bytesRead] ^ (1 << bitsRead);
     }
     bitsRead++;
-    printf("%d %d %d %u\n", getpid(), bytesRead, bitsRead, message[bytesRead]);
+    //printf("%d %d %d %u\n", getpid(), bytesRead, bitsRead, message[bytesRead]);
     if(bitsRead == 8)
     {
         bitsRead = 0;
@@ -73,7 +73,7 @@ void SendAByte(char byte, pid_t pid)
     int i = 0;
     for(i = 0; i < 8; i++)
     {
-        printf("%d %d %u\n", getpid(), i, c);
+        //printf("%d %d %u\n", getpid(), i, c);
         if(c & 1)
         {
             kill(pid, SIGUSR2);
@@ -83,6 +83,6 @@ void SendAByte(char byte, pid_t pid)
             kill(pid, SIGUSR1);
         }
         c = c >> 1;
-        sleep(1);
+        sleep(1); //
     }
 }

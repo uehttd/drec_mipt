@@ -83,6 +83,6 @@ void SendAByte(char byte, pid_t pid)
             kill(pid, SIGUSR1);
         }
         c = c >> 1;
-        sleep(1); //
+        sleep(1); //making a pause for receiver to process the signal
     }
 }

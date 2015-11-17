@@ -12,6 +12,16 @@
 #define MAX_MESSAGE_LENGTH 1000
 #define DEF_PORT 51000
 
+/*
+ * Выглядит правдоподобно, но я не могу проверить в данный момент на двух компьютерах. А на одном в данный момент это сделать нельзя.
+ * Просмотрите мои комментарии к коду обеих программ.
+ */
+
+/*
+ * 1. В этом code style'е названия структур с заглавной буквы пишут.
+ * 2. для 255 нужна константа
+ * 3. Обычно переменные называют так в данном стиле: cliCount, cliAddr, т.е. первое слово со строчной, остальные с заглавной.
+ */
 struct client
 {
     struct sockaddr_in addr;
@@ -69,14 +79,14 @@ int main()
         int senderNum = -1;
         if((senderNum = IsAClient(cliaddr, clients, clicount)) >= 0)
         {
-            //printf("client no %d sent a message %s\n", senderNum, line);
+            printf("client no %d sent a message %s\n", senderNum, line);
             SendToAllCientsButOne(sockfd, line, clients, senderNum, clicount);
         }
         else
         {
             AddClient(cliaddr, clients, &clicount);
-            //printf("someones connected, %ul\n", cliaddr.sin_addr.s_addr);
-            //ListClients(clients, clicount);
+            printf("someones connected, %ul\n", cliaddr.sin_addr.s_addr);
+            ListClients(clients, clicount);
         }
     }
   }
@@ -88,6 +98,9 @@ int IsAClient(struct sockaddr_in current, struct client* clients, int clicount)
     int i = 0;
     for(i = 0; i < clicount; i++)
     {
+	/*
+	 * Проверяйте заодно совпадение порта: это даст возможность запускать несколько клиентов и сервер на одной машине, что облегчит процесс разработки и тестирования
+	 */
         if(clients[i].addr.sin_addr.s_addr == current.sin_addr.s_addr)
         {
             return i;

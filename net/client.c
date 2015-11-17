@@ -59,6 +59,10 @@ int main(int argc, char** argv)
   pid_t pid = fork();
   if(pid == 0)
   {
+    /*
+     * Вы очень здорово разделяете код на ф-и, что делает код самодокументируемым.
+     * Могли бы здесь также вынести "fgets+sendto" + "recvfrom+printf" + отправку приветственного сообщения серверу в отдельные ф-и.
+     */
     while(1)
     {
         fgets(sendline, MESSAGE_LEGNTH, stdin);
@@ -75,7 +79,7 @@ int main(int argc, char** argv)
   {
     while(1)
     {
-      if ((n = recvfrom(sockfd, recvline, 1000, 0, (struct sockaddr*) NULL, NULL)) < 0)
+      if ((n = recvfrom(sockfd, recvline, MESSAGE_LEGNTH, 0, (struct sockaddr*) NULL, NULL)) < 0)
       {
         perror(NULL);
         close(sockfd);

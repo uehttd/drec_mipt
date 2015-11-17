@@ -10,11 +10,12 @@
 
 #define MAX_CLIENTS_COUNT 50
 #define MAX_MESSAGE_LENGTH 1000
+#define DEF_PORT 51000
 
 struct client
 {
     struct sockaddr_in addr;
-    //char nickname[255];
+    char nickname[255];
 };
 
 int IsAClient(struct sockaddr_in current, struct client* clients, int clicount);
@@ -33,7 +34,7 @@ int main()
   
   bzero(&servaddr, sizeof(servaddr));
   servaddr.sin_family = AF_INET;
-  servaddr.sin_port = htons(51000);
+  servaddr.sin_port = htons(DEF_PORT);
   servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
   
   if ((sockfd = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
@@ -56,7 +57,7 @@ int main()
   while (1)
   {
     clilen = sizeof(cliaddr);
-    if ((n = recvfrom(sockfd, line, 999, 0, 
+    if ((n = recvfrom(sockfd, line, MAX_MESSAGE_LENGTH - 1, 0, 
       (struct sockaddr*)&cliaddr, &clilen)) < 0)
     {
       perror(NULL);

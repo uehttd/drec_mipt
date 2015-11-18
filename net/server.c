@@ -13,16 +13,6 @@
 #define DEF_PORT 51000
 #define NICKNAME_LENGTH 255
 
-/*
- * Выглядит правдоподобно, но я не могу проверить в данный момент на двух компьютерах. А на одном в данный момент это сделать нельзя.
- * Просмотрите мои комментарии к коду обеих программ.
- */
-
-/*
- * 1. В этом code style'е названия структур с заглавной буквы пишут.
- * 2. для 255 нужна константа
- * 3. Обычно переменные называют так в данном стиле: cliCount, cliAddr, т.е. первое слово со строчной, остальные с заглавной.
- */
 struct Client
 {
     struct sockaddr_in addr;
@@ -67,13 +57,16 @@ int main()
   
   while (1)
   {
+    /*
+     * Не обязательно инициализировать переменную cliLen чем-либо, т.к. в неё будет записывать значение, а не считываться оттуда.
+     */
     cliLen = sizeof(cliaddr);
     if ((n = recvfrom(sockfd, line, MAX_MESSAGE_LENGTH - 1, 0, 
-      (struct sockaddr*)&cliaddr, &cliLen)) < 0)
+      (struct sockaddr*)&cliaddr, (socklen_t*)&cliLen)) < 0)
     {
-      perror(NULL);
-      close(sockfd);
-      exit(1);
+	perror(NULL);
+	close(sockfd);
+	exit(1);
     }
     else
     {
@@ -99,10 +92,8 @@ int IsAClient(struct sockaddr_in current, struct Client* clients, int cliCount)
     int i = 0;
     for(i = 0; i < cliCount; i++)
     {
-	/*
-	 * Проверяйте заодно совпадение порта: это даст возможность запускать несколько клиентов и сервер на одной машине, что облегчит процесс разработки и тестирования
-	 */
-        if(clients[i].addr.sin_addr.s_addr == current.sin_addr.s_addr && clients[i].addr.sin_port == current.sin_port)
+        if(clients[i].addr.sin_addr.s_addr == current.sin_addr.s_addr && 
+	   clients[i].addr.sin_port 	   == current.sin_port)
         {
             return i;
         }
@@ -133,9 +124,9 @@ void SendToAllCientsButOne(int sockfd, char* message, struct Client* clients, in
         if (sendto(sockfd, message, strlen(message) + 1, 0,
           (struct sockaddr*)&clients[i].addr, cliLen) < 0)
         {
-          perror(NULL);
-          close(sockfd);
-          exit(1);
+	    perror(NULL);
+	    close(sockfd);
+	    exit(1);
         }
     }
 }

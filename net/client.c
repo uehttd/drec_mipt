@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #define MESSAGE_LEGNTH 1000
+#define DEF_PORT 51000
 
 void Send(int sockfd, struct sockaddr_in servaddr);
 void Receive(int sockfd);
@@ -45,7 +46,7 @@ int main(int argc, char** argv)
   }
   bzero(&servaddr, sizeof(servaddr));
   servaddr.sin_family = AF_INET;
-  servaddr.sin_port = htons(51000);
+  servaddr.sin_port = htons(DEF_PORT);
   if (inet_aton(argv[1], &servaddr.sin_addr) == 0)
   {
     printf("Invalid IP address\n");
@@ -68,7 +69,7 @@ int main(int argc, char** argv)
     while(1)
     {
       Receive(sockfd);
-   }
+    }
   }
   close(sockfd);
   return 0;

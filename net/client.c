@@ -10,6 +10,10 @@
 
 #define MESSAGE_LEGNTH 1000
 
+void Send(int sockfd, struct sockaddr_in servaddr);
+void Receive(int sockfd);
+void Connect(int sockfd, struct sockaddr_in servaddr);
+
 int main(int argc, char** argv)
 {
   int sockfd;
@@ -48,46 +52,60 @@ int main(int argc, char** argv)
     close(sockfd);
     exit(1);
   }
-  if (sendto(sockfd, NULL, 0, 0,
-    (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0)
-  {
-    perror(NULL);
-    close(sockfd);
-    exit(1);
-  }
+  
+  Connect(sockfd, servaddr);
   
   pid_t pid = fork();
   if(pid == 0)
   {
-    /*
-     * Вы очень здорово разделяете код на ф-и, что делает код самодокументируемым.
-     * Могли бы здесь также вынести "fgets+sendto" + "recvfrom+printf" + отправку приветственного сообщения серверу в отдельные ф-и.
-     */
     while(1)
     {
-        fgets(sendline, MESSAGE_LEGNTH, stdin);
-        if (sendto(sockfd, sendline, strlen(sendline) + 1, 0,
-            (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0)
-        {
-            perror(NULL);
-            close(sockfd);
-            exit(1);
-        }
+        Send(sockfd, servaddr);
     } 
   }
   else
   {
     while(1)
     {
-      if ((n = recvfrom(sockfd, recvline, MESSAGE_LEGNTH, 0, (struct sockaddr*) NULL, NULL)) < 0)
-      {
-        perror(NULL);
-        close(sockfd);
-        exit(1);
-      }
-      printf("%s", recvline);
+      Receive(sockfd);
    }
   }
   close(sockfd);
   return 0;
+}
+
+void Send(int sockfd, struct sockaddr_in servaddr)
+{   
+    char sendLine[MESSAGE_LEGNTH] = "";
+    fgets(sendLine, MESSAGE_LEGNTH, stdin);
+    if(sendto(sockfd, sendLine, strlen(sendLine) + 1, 0,
+       (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0)
+    {
+        perror(NULL);
+        close(sockfd);
+        exit(1);
+    }
+}
+
+void Receive(int sockfd)
+{
+    char recvLine[MESSAGE_LEGNTH] = "";
+    if ((recvfrom(sockfd, recvLine, MESSAGE_LEGNTH, 0, (struct sockaddr*) NULL, NULL)) < 0)
+    {
+        perror(NULL);
+        close(sockfd);
+        exit(1);
+    }
+    printf("%s", recvLine);
+}
+
+void Connect(int sockfd, struct sockaddr_in servaddr)
+{
+    if(sendto(sockfd, NULL, 0, 0,
+        (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0)
+    {
+        perror(NULL);
+        close(sockfd);
+        exit(1);
+    }
 }

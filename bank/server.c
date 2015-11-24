@@ -31,6 +31,9 @@ void* ThreadFunc(void* arg)
     int n = 0;
     double balance = 0;
     char line[STRING_LENGTH] = "";
+    /*
+     * Старайтесь названия переменных делать менее лаконичными и более понятными: or...
+     */
     struct OperationResult or;
     struct sembuf mysembuf;
     while((n = read(*newsockfd, (void*)line, STRING_LENGTH - 1)) > 0)
@@ -72,13 +75,13 @@ void* ThreadFunc(void* arg)
         mysembuf.sem_flg = 0;
         mysembuf.sem_num = 0;
         mysembuf.sem_op  = 1;
-        if(semop(semid, &mysembuf, 1) < 0)
+        
+	if(semop(semid, &mysembuf, 1) < 0)
         {
             printf("Can`t wait for condition\n");
             semctl(semid, IPC_RMID, 0); 
             return NULL;
         }
-        
         
         if((n = write(*newsockfd, &or, sizeof(or))) < 0)
         {
@@ -86,7 +89,6 @@ void* ThreadFunc(void* arg)
             close(*newsockfd);
             exit(1);
         }
-        
     }
         
     if(n < 0)
@@ -154,13 +156,12 @@ int main(int argc, char **argv)
         close(sockfd);
         exit(-1);
     }
-    
-    
+        
     while(1)
     {
         clilen = sizeof(cliaddr);
         int* newsockfd = (int*)calloc(1, sizeof(int));
-        if((*newsockfd = accept(sockfd, (struct sockaddr*)&cliaddr, &clilen)) < 0)
+	if((*newsockfd = accept(sockfd, (struct sockaddr*)&cliaddr, &clilen)) < 0)
         {
             perror(NULL);
             close(sockfd);
